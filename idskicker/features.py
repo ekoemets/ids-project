@@ -46,3 +46,17 @@ def add_text_as_features(df, text_column):
     df[text_column + "_length"] = df[text_column].str.len()
     df[text_column + "_words"] = df[text_column].str.findall(r'\w+').str.len()
 
+def add_datediff_as_feature(df, start_date_column, end_date_column):
+    """
+    Calculates the difference in days between date1 and date2 by
+    subtracting date1 from date2.
+
+    params:
+        df: dataframe to which feature is added
+        date1: start date column name
+        date2: end date column name
+    """
+    datetime1 = pd.to_datetime(df[start_date_column])
+    datetime2 = pd.to_datetime(df[end_date_column])
+    new_col_name = f"{start_date_column}_to_{end_date_column}_days"
+    df[new_col_name] = (datetime2 - datetime1).dt.days

@@ -1,12 +1,25 @@
 import pandas as pd
 
 def load_dataset(path_to_csv, *args, **kwargs):
+    """
+    Wrapper method for loading the dataset as csv.
+    """
     return pd.read_csv(path_to_csv, *args, **kwargs)
 
 def save_dataset(df, save_dir, *args, **kwargs):
+    """
+    Wrapper method for saving the dataset as csv.
+    Ignores index on saving.
+    """
     df.to_csv(save_dir, *args, index=False,**kwargs)
 
 def clean_data(df):
+    """
+    Removes unwanted rows from the initial raw kickstarter
+    projects dataset.
+    
+    Returns new dataset.
+    """
     # Use the value conversions done by the external API
     data = df.drop(columns=["goal", "usd pledged", "pledged"])
 

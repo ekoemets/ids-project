@@ -9,6 +9,7 @@ features.add_date_as_features(df, "deadline")
 features.add_date_as_features(df, "launched")
 features.add_time_as_features(df, "launched")
 features.add_text_as_features(df, "name")
+features.add_datediff_as_feature(df, "launched", "deadline")
 dataset_save_path = data_dir / "processed" / "02-ks-projects-engineered.csv"
 print(f"Saving dataset to {dataset_save_path}")
 save_dataset(df, dataset_save_path)

@@ -28,3 +28,6 @@ MANIFEST
 
 # Ipynb cache
 .ipynb_checkpoints
+
+# Ignore data folder
+data/
