@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 def add_date_as_features(df, date_column):
     """
@@ -60,3 +61,39 @@ def add_datediff_as_feature(df, start_date_column, end_date_column):
     datetime2 = pd.to_datetime(df[end_date_column])
     new_col_name = f"{start_date_column}_to_{end_date_column}_days"
     df[new_col_name] = (datetime2 - datetime1).dt.days
+
+def add_n_most_frequent_words_as_features(df, text_column, max_features):
+    from sklearn.feature_extraction.text import CountVectorizer
+    import nltk
+    nltk.download('wordnet')
+    nltk.download('stopwords')
+    from nltk.corpus import stopwords
+    documents = []
+    stemmer = nltk.stem.WordNetLemmatizer()
+    for i in range(0, len(df)):
+        # Remove all the special characters
+        document = re.sub(r'\W', ' ', str(df[text_column][i]))
+        # remove all single characters
+        document = re.sub(r'\s+[a-zA-Z]\s+', ' ', document)
+        # Remove single characters from the start
+        document = re.sub(r'\^[a-zA-Z]\s+', ' ', document)
+        # Substituting multiple spaces with single space
+        document = re.sub(r'\s+', ' ', document, flags=re.I)
+        # Removing prefixed 'b'
+        document = re.sub(r'^b\s+', '', document)
+        # Converting to Lowercase
+        document = document.lower()
+        # Lemmatization
+        document = document.split()
+        document = [stemmer.lemmatize(word) for word in document]
+        document = ' '.join(document)
+        documents.append(document)
+    vectorizer = CountVectorizer(max_features=max_features, min_df=5, max_df=0.7, 
+            stop_words=stopwords.words('english'))
+    values = vectorizer.fit_transform(documents).toarray()
+    names = vectorizer.get_feature_names()
+    for i in range(len(names)):
+        col_values = []
+        for j in range(len(values)):
+            col_values.append(values[j][i])
+        df["title_has_" + names[i]] = col_values
